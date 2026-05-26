@@ -3,6 +3,9 @@
 module Syntax
     ( Expr(..)
     , Stmt(..)
+    , Type(..)
+    , TypedStmt(..)
+    , TypedExpr(..)
     , Program
     , Parser
     ) where
@@ -13,9 +16,12 @@ import Text.Megaparsec
 
 type Parser = Parsec Void Text
 
+data Type = TDouble | TBool | TString deriving (Show, Eq)
+
 data Expr
     = EVar Text
     | ELit Double
+    | EString Text
     | EBool Bool
     | EAdd Expr Expr
     | ESub Expr Expr
@@ -30,5 +36,11 @@ data Stmt
     | SExpr Expr
     deriving (Show, Eq)
 
+data TypedExpr = TypedExpr Type Expr deriving (Show, Eq)
+
+data TypedStmt
+    = TSVar Text TypedExpr
+    | TSExpr TypedExpr
+    deriving (Show, Eq)
 
 type Program = [Stmt]

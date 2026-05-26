@@ -2,7 +2,7 @@
 module Main (main, runDebugger) where
 
 import Eval (eval)
-import Lexer (program)
+import Parser (program)
 import Semantic (checkProgram)
 import Text.Megaparsec (parse, errorBundlePretty)
 import qualified Data.Text as T
