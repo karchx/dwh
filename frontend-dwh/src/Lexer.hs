@@ -10,9 +10,7 @@ module Lexer
     , identifier
     ) where
 
-import Syntax 
-    ( Parser
-    , Program)
+import Syntax (Parser)
 
 import Text.Megaparsec
 import Text.Megaparsec.Char
@@ -39,12 +37,11 @@ double :: Parser Double
 double = lexeme (try L.float <|> (fromIntegral <$> (L.decimal :: Parser Integer)))
 
 identifier :: Parser Text
-identifier = lexeme (p >>= check . T.pack)
-    where
-        p = (:) <$> letterChar <*> many alphaNumChar
-        check x = if x `elem` reserveWords
-                  then fail $ "Cannot use reserved keywordThe keyword '" ++ T.unpack x ++ "' as an identifier"
-                  else return x
+identifier = lexeme . try $ do
+    ident <- T.pack <$> ((:) <$> letterChar <*> many alphaNumChar)
+    if ident `elem` reserveWords
+        then empty
+        else return ident
 
 rword :: Text -> Parser ()
 rword w = lexeme (string w *> notFollowedBy alphaNumChar) 

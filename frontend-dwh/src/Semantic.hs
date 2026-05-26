@@ -7,10 +7,8 @@ module Semantic
 
 import Syntax
 import Data.Text (Text)
-import qualified Data.Text as T
 import Data.Map (Map)
 import qualified Data.Map as Map
-import Control.Monad (unless)
 import Control.Monad.State
 
 type SemanticError = Text
