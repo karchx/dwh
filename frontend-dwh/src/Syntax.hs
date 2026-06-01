@@ -1,11 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveFunctor #-}
 
 module Syntax
     ( Expr(..)
     , Stmt(..)
     , Type(..)
-    , TypedStmt(..)
-    , TypedExpr(..)
     , Program
     , Parser
     ) where
@@ -18,29 +17,22 @@ type Parser = Parsec Void Text
 
 data Type = TDouble | TBool | TString deriving (Show, Eq)
 
-data Expr
-    = EVar Text
-    | ELit Double
-    | EString Text
-    | EBool Bool
-    | EAdd Expr Expr
-    | ESub Expr Expr
-    | EMult Expr Expr
-    | EDiv Expr Expr
-    | EPow Expr Expr
-    | ESqrt Expr
-    deriving (Show, Eq)
+data Expr a
+    = EVar a Text
+    | ELit a Double
+    | EString a Text
+    | EBool a Bool
+    | EAdd a (Expr a) (Expr a)
+    | ESub a (Expr a) (Expr a)
+    | EMult a (Expr a) (Expr a)
+    | EDiv a (Expr a) (Expr a)
+    | EPow a (Expr a) (Expr a)
+    | ESqrt a (Expr a)
+    deriving (Show, Eq, Functor)
 
-data Stmt
-    = SVar Text Expr
-    | SExpr Expr
-    deriving (Show, Eq)
+data Stmt a
+    = SVar a Text (Expr a)
+    | SExpr a (Expr a)
+    deriving (Show, Eq, Functor)
 
-data TypedExpr = TypedExpr Type Expr deriving (Show, Eq)
-
-data TypedStmt
-    = TSVar Text TypedExpr
-    | TSExpr TypedExpr
-    deriving (Show, Eq)
-
-type Program = [Stmt]
+type Program a = [Stmt a]

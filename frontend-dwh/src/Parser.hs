@@ -4,48 +4,66 @@ module Parser (program) where
 
 import Syntax
 import Lexer
+import Data.Text (Text)
 import Text.Megaparsec
 import Control.Monad.Combinators.Expr
 
-stmt :: Parser Stmt
-stmt = varDecl <|> (SExpr <$> expr)
+stmt :: Parser (Stmt SourcePos)
+stmt = varDecl <|> (SExpr <$> getSourcePos <*> expr)
 
-expr :: Parser Expr
+expr :: Parser (Expr SourcePos)
 expr = makeExprParser term operatorTable
 
-term :: Parser Expr
+term :: Parser (Expr SourcePos)
 term = factor
 
-pBool :: Parser Expr
-pBool = (EBool True <$ rword "true") <|> (EBool False <$ rword "false")
+pBool :: Parser (Expr SourcePos)
+pBool = do
+  pos <- getSourcePos
+  (EBool pos True <$ rword "true") <|> (EBool pos False <$ rword "false")
 
-factor :: Parser Expr
+factor :: Parser (Expr SourcePos)
 factor = choice
     [ parens expr
     , pBool
-    , ELit <$> double
-    , EVar <$> identifier
+    , ELit <$> getSourcePos <*> double
+    , EVar <$> getSourcePos <*> identifier
     ]
 
-varDecl :: Parser Stmt
+varDecl :: Parser (Stmt SourcePos)
 varDecl = do
+    pos <- getSourcePos
     _ <- rword "var"
     x <- identifier
     _ <- symbol "="
     e <- expr
-    return $ SVar x e
+    return $ SVar pos x e
 
-program :: Parser Program
+program :: Parser (Program SourcePos)
 program = between sc eof (many stmt)
 
-operatorTable :: [[Operator Parser Expr]]
+binOp :: (SourcePos -> Expr SourcePos -> Expr SourcePos -> Expr SourcePos) 
+      -> Text 
+      -> Parser (Expr SourcePos -> Expr SourcePos -> Expr SourcePos)
+binOp constructor sym = do
+  pos <- getSourcePos
+  _ <- symbol sym
+  return (constructor pos)
+
+preOp :: (SourcePos -> Expr SourcePos -> Expr SourcePos) -> Text -> Parser (Expr SourcePos -> Expr SourcePos)
+preOp constructor sym = do
+  pos <- getSourcePos
+  _ <- rword sym
+  return (constructor pos)
+
+operatorTable :: [[Operator Parser (Expr SourcePos)]]
 operatorTable =
-    [ [ InfixR (EPow <$ symbol "^" ) ]
-    , [ Prefix (ESqrt <$ rword "sqrt") ]
+    [ [ InfixR (binOp EPow "^") ]
+    , [ Prefix (preOp ESqrt "sqrt") ]
 
-    , [ InfixL (EMult <$ symbol "*")
-      , InfixL (EDiv <$ symbol "/") ]
+    , [ InfixL (binOp EMult "*")
+      , InfixL (binOp EDiv "/") ]
 
-    , [ InfixL (EAdd <$ symbol "+")
-      , InfixL (ESub <$ symbol "-") ]
+    , [ InfixL (binOp EAdd "+")
+      , InfixL (binOp ESub "-") ]
     ]
