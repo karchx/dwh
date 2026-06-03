@@ -22,10 +22,14 @@ pBool = do
   pos <- getSourcePos
   (EBool pos True <$ rword "true") <|> (EBool pos False <$ rword "false")
 
+pString :: Parser (Expr SourcePos)
+pString = EString <$> getSourcePos <*> stringLit
+
 factor :: Parser (Expr SourcePos)
 factor = choice
     [ parens expr
     , pBool
+    , pString
     , ELit <$> getSourcePos <*> double
     , EVar <$> getSourcePos <*> identifier
     ]

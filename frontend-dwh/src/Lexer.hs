@@ -7,6 +7,7 @@ module Lexer
     , parens
     , rword
     , double
+    , stringLit
     , identifier
     ) where
 
@@ -35,6 +36,12 @@ parens = between (symbol "(") (symbol ")")
 
 double :: Parser Double
 double = lexeme (try L.float <|> (fromIntegral <$> (L.decimal :: Parser Integer)))
+
+stringLit :: Parser Text
+stringLit = lexeme $ do
+    _ <- char '"'
+    str <- manyTill L.charLiteral (char '"')
+    return (T.pack str)
 
 identifier :: Parser Text
 identifier = lexeme . try $ do
