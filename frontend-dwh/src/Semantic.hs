@@ -64,6 +64,7 @@ checkBinOp pos constructor e1 e2 = do
     t2 <- checkExpr e2
     case (getType t1, getType t2) of
         (TDouble, TDouble) -> return $ constructor (pos, TDouble) t1 t2
+        (TString, TString) -> return $ constructor (pos, TString) t1 t2
         _                  -> lift $ Left $ ErrorAt pos "Types Error: invalid combination use Double and Double"
 
 
