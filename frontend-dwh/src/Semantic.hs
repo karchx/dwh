@@ -20,6 +20,22 @@ checkProgram :: Program SourcePos -> Either SemanticError (Program (SourcePos, T
 checkProgram prog = evalStateT (mapM checkStmt prog) Map.empty
 
 checkStmt :: Stmt SourcePos -> SemanticCtx (Stmt (SourcePos, Type))
+checkStmt (SFun pos name params body) = do
+    globalEnv <- get
+    -- TODO: TDouble forced, replacement for Hindley-Milner.
+    let localEnv = foldr (\p env -> Map.insert p TDouble env) globalEnv params
+    put localEnv
+
+    checkBody <- mapM checkStmt body
+    let retType = extractReturnType checkBody
+
+    put (Map.insert name (TFun (replicate (length params) TDouble) retType) globalEnv)
+
+    return $ SFun (pos TFun (replicate (length params) TDouble) retType) name params checkBody
+
+checkStmt (SReturn pos expr) = do
+    tExpr <- checkExpr expr
+    return $ SReturn (pos, getType tExpr) tExpr
 checkStmt (SVar pos varName expr) = do
     -- check before expr
     -- [ERROR]: var x = x + 1
@@ -67,6 +83,8 @@ checkBinOp pos constructor e1 e2 = do
         (TString, TString) -> return $ constructor (pos, TString) t1 t2
         _                  -> lift $ Left $ ErrorAt pos "Types Error: invalid combination use Double and Double"
 
+extractReturnType :: [Stmt (SourcePos, Type)] -> [Type]
+extractReturnType stmts = [getType expr | SReturn _ expr <- stmts]
 
 getType :: Expr (SourcePos, Type) -> Type
 getType (EVar (_, t) _) = t

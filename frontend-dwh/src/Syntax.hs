@@ -15,7 +15,7 @@ import Text.Megaparsec
 
 type Parser = Parsec Void Text
 
-data Type = TDouble | TBool | TString deriving (Show, Eq)
+data Type = TDouble | TBool | TString | TFun [Type] Type deriving (Show, Eq)
 
 data Expr a
     = EVar a Text
@@ -28,11 +28,14 @@ data Expr a
     | EDiv a (Expr a) (Expr a)
     | EPow a (Expr a) (Expr a)
     | ESqrt a (Expr a)
+    | EApp a (Expr a) [Expr a]
     deriving (Show, Eq, Functor)
 
 data Stmt a
     = SVar a Text (Expr a)
     | SExpr a (Expr a)
+    | SFun a Text [Text] [Stmt a]
+    | SReturn a (Expr a)
     deriving (Show, Eq, Functor)
 
 type Program a = [Stmt a]

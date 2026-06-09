@@ -9,6 +9,8 @@ module Lexer
     , double
     , stringLit
     , identifier
+    , braces
+    , commaSep
     ) where
 
 import Syntax (Parser)
@@ -29,7 +31,13 @@ symbol :: Text -> Parser Text
 symbol = L.symbol sc
 
 reserveWords :: [Text]
-reserveWords = ["var", "true", "false", "sqrt"]
+reserveWords = ["var", "true", "false", "sqrt", "fun", "return"]
+
+braces :: Parser a -> Parser a
+braces = between (symbol "{") (symbol "}")
+
+commaSep :: Parser a -> Parser [a]
+commaSep p = p `sepBy` symbol "," 
 
 parens :: Parser a -> Parser a
 parens = between (symbol "(") (symbol ")")

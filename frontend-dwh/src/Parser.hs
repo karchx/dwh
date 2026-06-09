@@ -9,7 +9,7 @@ import Text.Megaparsec
 import Control.Monad.Combinators.Expr
 
 stmt :: Parser (Stmt SourcePos)
-stmt = varDecl <|> (SExpr <$> getSourcePos <*> expr)
+stmt = funDecl <|> returnDecl <|> varDecl <|> (SExpr <$> getSourcePos <*> expr)
 
 expr :: Parser (Expr SourcePos)
 expr = makeExprParser term operatorTable
@@ -31,8 +31,16 @@ factor = choice
     , pBool
     , pString
     , ELit <$> getSourcePos <*> double
+    , try functionCall
     , EVar <$> getSourcePos <*> identifier
     ]
+
+functionCall :: Parser (Expr SourcePos)
+functionCall = do
+  pos <- getSourcePos
+  fName <- identifier
+  args <- parens (commaSep expr)
+  return $ EApp pos (EVar pos fName) args
 
 varDecl :: Parser (Stmt SourcePos)
 varDecl = do
@@ -42,6 +50,22 @@ varDecl = do
     _ <- symbol "="
     e <- expr
     return $ SVar pos x e
+  
+funDecl :: Parser (Stmt SourcePos)
+funDecl = do
+  pos <- getSourcePos
+  _ <- "fun"
+  name <- identifier
+  params <- parens (commaSep identifier)
+  body <- braces (many stmt) 
+  return $ SFun pos name params body
+
+returnDecl :: Parser (Stmt SourcePos)
+returnDecl = do
+  pos <- getSourcePos
+  _ <- rword "return"
+  e <- expr
+  return $ SReturn pos e
 
 program :: Parser (Program SourcePos)
 program = between sc eof (many stmt)
