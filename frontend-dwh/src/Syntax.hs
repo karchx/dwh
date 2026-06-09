@@ -29,6 +29,8 @@ data Expr a
     | EPow a (Expr a) (Expr a)
     | ESqrt a (Expr a)
     | EApp a (Expr a) [Expr a]
+    | ESysCall a Text [Expr a]
+    | EConnect a (Expr a) (Expr a)
     deriving (Show, Eq, Functor)
 
 data Stmt a

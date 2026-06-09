@@ -88,7 +88,7 @@ operatorTable :: [[Operator Parser (Expr SourcePos)]]
 operatorTable =
     [ [ InfixR (binOp EPow "^") ]
     , [ Prefix (preOp ESqrt "sqrt") ]
-
+    , [ InfixL (EConnect a <$ symbol "->") ]
     , [ InfixL (binOp EMult "*")
       , InfixL (binOp EDiv "/") ]
 
