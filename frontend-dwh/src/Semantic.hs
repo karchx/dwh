@@ -31,7 +31,7 @@ checkStmt (SFun pos name params body) = do
 
     put (Map.insert name (TFun (replicate (length params) TDouble) retType) globalEnv)
 
-    return $ SFun (pos TFun (replicate (length params) TDouble) retType) name params checkBody
+    return $ SFun (pos, TFun (replicate (length params) TDouble) retType) name params checkBody
 
 checkStmt (SReturn pos expr) = do
     tExpr <- checkExpr expr
@@ -83,8 +83,8 @@ checkBinOp pos constructor e1 e2 = do
         (TString, TString) -> return $ constructor (pos, TString) t1 t2
         _                  -> lift $ Left $ ErrorAt pos "Types Error: invalid combination use Double and Double"
 
-extractReturnType :: [Stmt (SourcePos, Type)] -> [Type]
-extractReturnType stmts = [getType expr | SReturn _ expr <- stmts]
+extractReturnType :: [Stmt (SourcePos, Type)] -> Type
+extractReturnType stmts = head $ [getType expr | SReturn _ expr <- stmts]
 
 getType :: Expr (SourcePos, Type) -> Type
 getType (EVar (_, t) _) = t
@@ -97,3 +97,4 @@ getType (EMult (_, t) _ _) = t
 getType (EDiv (_, t) _ _) = t
 getType (EPow (_, t) _ _) = t
 getType (ESqrt (_, t) _) = t
+getType (EApp (_, t) _ _) = t

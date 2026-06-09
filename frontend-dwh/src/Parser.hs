@@ -54,7 +54,7 @@ varDecl = do
 funDecl :: Parser (Stmt SourcePos)
 funDecl = do
   pos <- getSourcePos
-  _ <- "fun"
+  _ <- rword "fun"
   name <- identifier
   params <- parens (commaSep identifier)
   body <- braces (many stmt) 
