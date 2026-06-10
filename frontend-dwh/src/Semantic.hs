@@ -8,6 +8,7 @@ module Semantic
 import Syntax
 import Data.Text (Text)
 import Data.Map (Map)
+import Data.Maybe (listToMaybe, fromMaybe)
 import qualified Data.Map as Map
 import Control.Monad.State
 import Text.Megaparsec.Pos (SourcePos)
@@ -36,12 +37,28 @@ checkStmt (SFun pos name params body) = do
 checkStmt (SReturn pos expr) = do
     tExpr <- checkExpr expr
     return $ SReturn (pos, getType tExpr) tExpr
-checkStmt (SVar pos varName expr) = do
-    -- check before expr
-    -- [ERROR]: var x = x + 1
+
+checkStmt (SAssign pos vars expr) = do
     tExpr <- checkExpr expr
-    modify (Map.insert varName (getType tExpr))
-    return $ SVar (pos, getType tExpr) varName tExpr
+    let exprType = getType tExpr
+    case (vars, exprType) of
+        -- Simple assign
+        ([v], _) -> do
+            modify (Map.insert v exprType)
+            return $ SAssign (pos, exprType) vars tExpr
+
+        -- Get identifier functions, e.g:
+        -- connector, result = function()
+        ([status, result], _) -> do
+            case tExpr of
+                EApp _ _ _ -> do
+                    modify (Map.insert status TBool)
+                    modify (Map.insert result exprType)
+                    return $ SAssign (pos, exprType) vars tExpr
+                _ -> lift $ Left $ ErrorAt pos "The assign failed"
+
+        -- Malformed
+        _ -> lift $ Left $ ErrorAt pos "Malformed assign"
 
 checkStmt (SExpr pos expr) = do
     tExpr <- checkExpr expr 
@@ -71,6 +88,19 @@ checkExpr (ESqrt pos e) = do
         TDouble -> return $ ESqrt (pos, TDouble) tExpr
         _        -> lift $ Left $ ErrorAt pos "Types Error: expect Double"
 
+checkExpr (EApp pos fun args) = do
+    tFun <- checkExpr fun
+    tArgs <- mapM checkExpr args
+    let argTypes = map getType tArgs
+    case getType tFun of
+        TFun paramTypes retType -> do
+            if length argTypes /= length paramTypes
+                then lift $ Left $ ErrorAt pos "Arity mismatch in the function call"
+                else if argTypes /= paramTypes
+                    then lift $ Left $ ErrorAt pos "Type mismatch in the function arguments"
+                    else return $ EApp (pos, retType) tFun tArgs
+        _ -> lift $ Left $ ErrorAt pos "Attempt to call an expression that is not a function"
+
 checkBinOp :: SourcePos 
            -> ((SourcePos, Type) -> Expr (SourcePos, Type) -> Expr (SourcePos, Type) -> Expr (SourcePos, Type)) 
            -> Expr SourcePos 
@@ -85,7 +115,7 @@ checkBinOp pos constructor e1 e2 = do
         _                  -> lift $ Left $ ErrorAt pos "Types Error: invalid combination use Double and Double"
 
 extractReturnType :: [Stmt (SourcePos, Type)] -> Type
-extractReturnType stmts = head $ [getType expr | SReturn _ expr <- stmts]
+extractReturnType stmts = fromMaybe TVoid $ listToMaybe [getType expr | SReturn _ expr <- stmts]
 
 getType :: Expr (SourcePos, Type) -> Type
 getType (EVar (_, t) _) = t
@@ -99,5 +129,5 @@ getType (EDiv (_, t) _ _) = t
 getType (EPow (_, t) _ _) = t
 getType (ESqrt (_, t) _) = t
 getType (EApp (_, t) _ _) = t
-getType (ESysCall _ _ _) = undefined
+getType (ESysCall (_, t) _ _) = t
 getType (EConnect (_, t) _ _) = t
