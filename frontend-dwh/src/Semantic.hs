@@ -63,6 +63,7 @@ checkExpr (ESub  pos e1 e2) = checkBinOp pos ESub e1 e2
 checkExpr (EMult pos e1 e2) = checkBinOp pos EMult e1 e2
 checkExpr (EDiv  pos e1 e2) = checkBinOp pos EDiv e1 e2
 checkExpr (EPow  pos e1 e2) = checkBinOp pos EPow e1 e2
+checkExpr (EConnect pos e1 e2) = checkBinOp pos EConnect e1 e2
 
 checkExpr (ESqrt pos e) = do
     tExpr <- checkExpr e
@@ -98,3 +99,5 @@ getType (EDiv (_, t) _ _) = t
 getType (EPow (_, t) _ _) = t
 getType (ESqrt (_, t) _) = t
 getType (EApp (_, t) _ _) = t
+getType (ESysCall _ _ _) = undefined
+getType (EConnect (_, t) _ _) = t
