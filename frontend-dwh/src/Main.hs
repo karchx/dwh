@@ -1,10 +1,19 @@
 
-module Main (main, runReplPipe) where
+module Main (main, runReplPipe, runFile) where
 
 import Parser (program)
 import Semantic (checkProgram)
 import Text.Megaparsec (parse, errorBundlePretty)
 import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+
+runFile :: FilePath -> IO ()
+runFile path = do
+    content <- TIO.readFile path
+    case parse program path content of
+        Left err -> putStrLn $ "Parser Error: \n" ++ errorBundlePretty err
+        Right ast -> do
+            putStrLn $ "Success AST:\n" ++ show ast
 
 runReplPipe :: String -> IO ()
 runReplPipe input = do

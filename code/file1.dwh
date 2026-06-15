@@ -1,0 +1,10 @@
+fun job_python() {
+    return call(job_in_systen)
+}
+
+fun job_golang(values) {
+    call(job_golang_in_system, values)
+}
+
+conector, result = job_python()
+conector -> job_golang(result)
