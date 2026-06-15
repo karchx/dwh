@@ -81,7 +81,9 @@ checkExpr (EMult pos e1 e2) = checkBinOp pos EMult e1 e2
 checkExpr (EDiv  pos e1 e2) = checkBinOp pos EDiv e1 e2
 checkExpr (EPow  pos e1 e2) = checkBinOp pos EPow e1 e2
 checkExpr (EConnect pos e1 e2) = checkBinOp pos EConnect e1 e2
-
+checkExpr (ESysCall pos name args) = do
+    tArgs <- mapM checkExpr args
+    return $ ESysCall (pos, TDouble) name tArgs
 checkExpr (ESqrt pos e) = do
     tExpr <- checkExpr e
     case getType tExpr of

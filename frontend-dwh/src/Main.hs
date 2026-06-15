@@ -1,6 +1,7 @@
 
 module Main (main, runReplPipe, runFile) where
 
+import Graph
 import Parser (program)
 import Semantic (checkProgram)
 import Text.Megaparsec (parse, errorBundlePretty)
@@ -13,7 +14,8 @@ runFile path = do
     case parse program path content of
         Left err -> putStrLn $ "Parser Error: \n" ++ errorBundlePretty err
         Right ast -> do
-            putStrLn $ "Success AST:\n" ++ show ast
+            analyzeGraph ast
+            putStrLn $ "Success AST"
 
 runReplPipe :: String -> IO ()
 runReplPipe input = do

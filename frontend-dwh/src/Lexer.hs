@@ -32,7 +32,7 @@ symbol :: Text -> Parser Text
 symbol = L.symbol sc
 
 reserveWords :: [Text]
-reserveWords = ["true", "false", "sqrt", "fun", "return"]
+reserveWords = ["true", "false", "sqrt", "fun", "return", "call"]
 
 braces :: Parser a -> Parser a
 braces = between (symbol "{") (symbol "}")

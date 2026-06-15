@@ -1,10 +1,12 @@
-fun job_python() {
-    return call(job_in_systen)
+fun jobPython() {
+    jobSystem = 1
+    return call(jobSystem)
 }
 
-fun job_golang(values) {
-    call(job_golang_in_system, values)
+fun jobGolang(values) {
+    extractGaia = 2
+    call(extractGaia, values)
 }
 
-conector, result = job_python()
-conector -> job_golang(result)
+conector, result = jobPython()
+conector -> jobGolang(result)

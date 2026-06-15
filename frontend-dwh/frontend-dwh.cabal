@@ -20,6 +20,7 @@ library
     import:           warnings
     exposed-modules:  Lexer
                     , Syntax
+                    , Graph
                     , Main
     -- other-modules:
     -- other-extensions:
