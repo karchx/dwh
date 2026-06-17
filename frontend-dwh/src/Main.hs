@@ -14,7 +14,7 @@ runFile path = do
     case parse program path content of
         Left err -> putStrLn $ "Parser Error: \n" ++ errorBundlePretty err
         Right ast -> do
-            analyzeGraph ast
+            visualizeAST ast
             putStrLn $ "Success AST"
 
 runReplPipe :: String -> IO ()
