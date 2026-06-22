@@ -1,12 +1,17 @@
-fun jobPython() {
-    jobSystem = 1
-    return call(jobSystem)
+** 1. Define Static task
+task PythonJob {
+    type: "bash"
+    command: "./jobSystem"
+    schedule: "* * * * *"
 }
 
-fun jobGolang(values) {
-    extractGaia = 2
-    call(extractGaia, values)
+task GolangJob(input_data) {
+    type: "internal"
+    eval: input_data * 2
 }
 
-conector, result = jobPython()
-conector -> jobGolang(result)
+** 2. Define DAG
+pipeline MainSchedule {
+    step_a = PythonJob()
+    step_b = GolangJob(input_data: step_a.stdout) 
+}
