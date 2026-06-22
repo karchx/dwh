@@ -13,9 +13,12 @@ extractEdges stmts = concatMap extract stmts
     where
         extract (SExpr _ (EConnect _ e1 e2)) = [(identifyJob e1, identifyJob e2)]
         extract (SFun _ _ _ body) = concatMap extract body
+        extract (SReturn _ e) = [(identifyJob e, "return")]
+        extract (SAssign _ _ e) = [(identifyJob e, "assign")]
         extract _ = []
 
         identifyJob (EVar _ name) = T.unpack name
+        identifyJob (ELit _ name) = show name
         identifyJob (EApp _ (EVar _ name) _) = T.unpack name
         identifyJob _ = "undefined (?_?)"
 

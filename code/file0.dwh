@@ -1,3 +1,16 @@
-fun jobPython(a, b) {
-    return a + b
+** 1. Define Static task
+task PythonJob {
+    type: "bash"
+    command: "./jobSystem"
+    schedule: "* * * * *"
+}
+
+task GolangJob(input_data) {
+    type: "internal"
+    eval: input_data * 2
+}
+
+** 2. Define DAG
+pipeline MainSchedule {
+    PythonJob -> GolangJob
 }
