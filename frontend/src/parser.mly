@@ -32,3 +32,7 @@ main_expr:
 
 block_expr:
 | LBRACE; exprs=separated_list(SEMICOLON, expr); RBRACE {Block($startpos, exprs)}
+
+expr:
+| i=INT {Integer($startpos, i)}
+
