@@ -26,3 +26,5 @@ type bin_op =
     | BinOpMult
     | BinOpDiv
 
+val string_of_bin_op : bin_op -> string
+

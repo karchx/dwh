@@ -34,14 +34,14 @@ rule read_token =
     | "/" { DIV }
     | "printf" { PRINTF }
     | whitespace { read_token lexbuf }
-    | "--" { single_line_comment lexbuf }
-    | "{-" { multi_line_comment lexbuf }
+    | "--" { read_single_line_comment lexbuf }
+    | "{-" { read_multi_line_comment lexbuf }
     | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
     | id { ID (Lexing.lexeme lexbuf) }
         | '"' { read_string (Buffer.create 17) lexbuf }
     | newline { next_line lexbuf; read_token lexbuf }
     | eof { EOF }
-    | _ { raise (SyntaxError ("Lexer - Illegal character: " ^ Lexing.lexeme buf)) }
+    | _ { raise (SyntaxError ("Lexer - Illegal character: " ^ Lexing.lexeme lexbuf)) }
 
 and read_single_line_comment = parse
     | newline { next_line lexbuf; read_token lexbuf }
@@ -63,7 +63,7 @@ and read_string buf = parse
     | '\\' 'r' { Buffer.add_char buf '\r'; read_string buf lexbuf }
     | '\\' 't' { Buffer.add_char buf '\t'; read_string buf lexbuf }
     | [^ '"' '\\']+
-      { Buffer.add_string buf (lexing.lexeme lexbuf);
+      { Buffer.add_string buf (Lexing.lexeme lexbuf);
         read_string buf lexbuf
       }
     | _ { raise (SyntaxError ("Illegal string character: " ^ Lexing.lexeme lexbuf)) }

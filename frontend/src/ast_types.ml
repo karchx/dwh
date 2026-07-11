@@ -34,3 +34,9 @@ type bin_op =
     | BinOpMult
     | BinOpDiv
 
+let string_of_bin_op = function
+    | BinOpPlus -> "+"
+    | BinOpMinus -> "-"
+    | BinOpMult -> "*"
+    | BinOpDiv -> "/"
+

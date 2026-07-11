@@ -1,7 +1,7 @@
 (executable
  (public_name frontend)
  (name main)
- (libraries core core_unix.sys_unix core_unix.command_unix)
+ (libraries core fmt core_unix.sys_unix core_unix.command_unix)
  (preprocess
   (pps ppx_jane))
  (lint

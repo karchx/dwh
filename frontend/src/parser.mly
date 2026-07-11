@@ -9,10 +9,17 @@
 
 %token <int> INT
 %token <string> ID
+%token LPAREN
+%token RPAREN
 %token LBRACE
 %token RBRACE
 %token TYPE_VOID 
 %token SEMICOLON
+%token PLUS
+%token MINUS
+%token MULT
+%token DIV
+%token PRINTF
 %token EOF
 
 %start program
@@ -33,6 +40,11 @@ main_expr:
 block_expr:
 | LBRACE; exprs=separated_list(SEMICOLON, expr); RBRACE {Block($startpos, exprs)}
 
+identifier:
+| variable=ID {Variable(Var_name.of_string variable)}
+
 expr:
+| LPAREN e=expr RPAREN {e}
 | i=INT {Integer($startpos, i)}
+| id=identifier { Identifier($startpos, id)}
 

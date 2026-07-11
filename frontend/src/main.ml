@@ -1,5 +1,6 @@
 open Core
 open Core_unix
+open Compile_program_ir
 
 let dwh_file =
     Command.Arg_type.create (fun filename ->
@@ -29,10 +30,7 @@ let command =
                 In_channel.with_file filename ~f:(fun file_ic ->
                     let lexbuf =
                         Lexing.from_channel file_ic in
-                    lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = filename };
-
-                    Printf.printf "Filenam %s open: " filename
-            ))
+                    compile_program_ir lexbuf ~should_pprint_past))
 
 let () = Command_unix.run ~version:"1.0" ~build_info:"RWO" command
 
