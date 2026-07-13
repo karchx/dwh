@@ -9,7 +9,7 @@ let rec pprint_expr ppf ~indent expr =
     let new_indent = indent_space ^ indent in
     match expr with
     | Integer (_, i) -> print_expr (Fmt.str "Int:%d" i)
-    | Let (_, _, var_name, bound_expr) ->
+    | Let (_, var_name, bound_expr) ->
             print_expr (Fmt.str "Let var: %s" (Var_name.to_string var_name));
             pprint_expr ppf ~indent:new_indent bound_expr
     | Identifier (_, id) -> (

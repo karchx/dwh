@@ -28,10 +28,15 @@ rule read_token =
     parse
     | "(" { LPAREN }
     | ")" { RPAREN }
+    | "{" { LBRACE }
+    | "}" { RBRACE }
+    | "=" { EQUAL }
     | "+" { PLUS }
     | "-" { MINUS }
     | "*" { MULT }
     | "/" { DIV }
+    | "void" { TYPE_VOID }
+    | "main" { MAIN }
     | "printf" { PRINTF }
     | whitespace { read_token lexbuf }
     | "--" { read_single_line_comment lexbuf }
@@ -57,6 +62,7 @@ and read_multi_line_comment = parse
 and read_string buf = parse
     | '"' { read_token lexbuf }
     | '\\' '/' { Buffer.add_char buf '/'; read_string buf lexbuf }
+    | '\\' '\\' { Buffer.add_char buf '\\'; read_string buf lexbuf }
     | '\\' 'b' { Buffer.add_char buf '\b'; read_string buf lexbuf }
     | '\\' 'f' { Buffer.add_char buf '\012'; read_string buf lexbuf }
     | '\\' 'n' { Buffer.add_char buf '\n'; read_string buf lexbuf }

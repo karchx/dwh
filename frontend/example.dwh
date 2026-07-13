@@ -1,7 +1,5 @@
-let x = 4 -- here is a comment
+-- comment
 
-{- This is a multi-line
-    comment
--}
-
-print("x's value is %d", x)
+void main() {
+    1 + 1
+}
