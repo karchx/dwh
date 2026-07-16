@@ -30,14 +30,15 @@ rule read_token =
     | ")" { RPAREN }
     | "{" { LBRACE }
     | "}" { RBRACE }
+    | ":" { COLON }
+    | ";" { SEMICOLON }
     | "=" { EQUAL }
     | "+" { PLUS }
     | "-" { MINUS }
     | "*" { MULT }
     | "/" { DIV }
-    | "void" { TYPE_VOID }
-    | "main" { MAIN }
-    | "printf" { PRINTF }
+    | "task" { TASK }
+    | "type" { TYPE }
     | whitespace { read_token lexbuf }
     | "--" { read_single_line_comment lexbuf }
     | "{-" { read_multi_line_comment lexbuf }

@@ -10,6 +10,7 @@ module type ID = sig
 end
 
 module Var_name : ID
+module Task_name : ID
 
 type modifier = MConst (** Immutable *) | MVar (** Mutable *)
 

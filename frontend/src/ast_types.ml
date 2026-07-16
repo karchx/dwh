@@ -20,6 +20,7 @@ module String_id = struct
 end
 
 module Var_name : ID = String_id
+module Task_name : ID  = String_id
 
 type modifier = MConst | MVar
 

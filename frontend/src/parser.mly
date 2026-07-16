@@ -13,37 +13,48 @@
 %token RPAREN
 %token LBRACE
 %token RBRACE
-%token TYPE_VOID 
+%token COLON
 %token SEMICOLON
 %token PLUS
 %token MINUS
 %token MULT
 %token DIV
 %token EQUAL
-%token MAIN
-%token PRINTF
 %token LET
+%token TASK
+%token TYPE 
+%token <string> STRING
 %token EOF
+
+%right EQUAL
+%left PLUS MINUS
+%left MULT DIV
 
 %start program
 
 %type <Parsed_ast.program> program
-%type <block_expr> main_expr
-%type <block_expr> block_expr
-%type <expr> expr
-
+%type <Parsed_ast.task_prop> task_property
+%type <Parsed_ast.block_expr> block_expr
+%type <Parsed_ast.expr> expr
 %type <bin_op> bin_op
 
 %%
 
 program:
-| main=main_expr; EOF {Prog(main)}
+| exprs=list(statements); EOF { Prog(Block($startpos, exprs)) }
 
-main_expr:
-| TYPE_VOID; MAIN; LPAREN; RPAREN; exprs=block_expr {exprs}
+statements:
+| e=expr { e }
+| t=decl { t }
+
+decl:
+| TASK; task_name=ID; LBRACE; props=list(task_property); RBRACE {Task($startpos, Task_name.of_string task_name, props)};
 
 block_expr:
 | LBRACE; exprs=separated_list(SEMICOLON, expr); RBRACE {Block($startpos, exprs)}
+
+task_property:
+| key=ID; COLON; value=STRING { TaskProp($startpos, key, value) }
 
 identifier:
 | variable=ID {Variable(Var_name.of_string variable)}
@@ -61,3 +72,4 @@ expr:
 | MINUS { BinOpMinus }
 | MULT { BinOpMult }
 | DIV { BinOpDiv }
+

@@ -12,6 +12,8 @@ let rec pprint_expr ppf ~indent expr =
     | Let (_, var_name, bound_expr) ->
             print_expr (Fmt.str "Let var: %s" (Var_name.to_string var_name));
             pprint_expr ppf ~indent:new_indent bound_expr
+    | Task (_, task_name, _) ->
+            print_expr (Fmt.str "Task: %s" (Task_name.to_string task_name))
     | Identifier (_, id) -> (
         match id with
             | Variable var_name ->
@@ -25,10 +27,6 @@ let rec pprint_expr ppf ~indent expr =
             print_expr (Fmt.str "Bin Op: %s" (string_of_bin_op bin_op));
             pprint_expr ppf ~indent:new_indent expr1 ;
             pprint_expr ppf ~indent:new_indent expr2
-    | Printf (_, format_str, args) ->
-            print_expr "Printf";
-            Fmt.pf ppf "%s%s@." new_indent (String.escaped format_str);
-            pprint_args ppf ~indent:new_indent args
 
 and pprint_args ppf ~indent = function
     | []   -> Fmt.pf ppf "%s()@." indent
