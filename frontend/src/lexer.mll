@@ -35,10 +35,10 @@ rule read_token =
     | "=" { EQUAL }
     | "+" { PLUS }
     | "-" { MINUS }
+    | "let" { LET }
     | "*" { MULT }
     | "/" { DIV }
     | "task" { TASK }
-    | "type" { TYPE }
     | whitespace { read_token lexbuf }
     | "--" { read_single_line_comment lexbuf }
     | "{-" { read_multi_line_comment lexbuf }
@@ -61,7 +61,7 @@ and read_multi_line_comment = parse
     | _ { read_multi_line_comment lexbuf }
 
 and read_string buf = parse
-    | '"' { read_token lexbuf }
+    | '"' { STRING (Buffer.contents buf) }
     | '\\' '/' { Buffer.add_char buf '/'; read_string buf lexbuf }
     | '\\' '\\' { Buffer.add_char buf '\\'; read_string buf lexbuf }
     | '\\' 'b' { Buffer.add_char buf '\b'; read_string buf lexbuf }

@@ -22,7 +22,6 @@
 %token EQUAL
 %token LET
 %token TASK
-%token TYPE 
 %token <string> STRING
 %token EOF
 
@@ -33,9 +32,9 @@
 %start program
 
 %type <Parsed_ast.program> program
-%type <Parsed_ast.task_prop> task_property
-%type <Parsed_ast.block_expr> block_expr
-%type <Parsed_ast.expr> expr
+%type <task_prop> task_property
+%type <block_expr> block_expr
+%type <expr> expr
 %type <bin_op> bin_op
 
 %%

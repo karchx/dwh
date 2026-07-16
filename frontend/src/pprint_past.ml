@@ -12,8 +12,11 @@ let rec pprint_expr ppf ~indent expr =
     | Let (_, var_name, bound_expr) ->
             print_expr (Fmt.str "Let var: %s" (Var_name.to_string var_name));
             pprint_expr ppf ~indent:new_indent bound_expr
-    | Task (_, task_name, _) ->
-            print_expr (Fmt.str "Task: %s" (Task_name.to_string task_name))
+    | Task (_, task_name, props) ->
+            print_expr (Fmt.str "Task: %s" (Task_name.to_string task_name));
+            List.iter ~f:(fun (TaskProp (_, key, value)) ->
+                Fmt.pf ppf "%sProp: %s = %s@." new_indent key value
+            ) props
     | Identifier (_, id) -> (
         match id with
             | Variable var_name ->
@@ -40,4 +43,4 @@ and pprint_block_expr ppf ~indent ~block_name (Block (_, exprs)) =
 let pprint_program ppf (Prog (main_expr)) =
     Fmt.pf ppf "Program@.";
     let indent = "└──" in
-    pprint_block_expr ppf ~indent ~block_name:"Main" main_expr
+    pprint_block_expr ppf ~indent ~block_name:"Entry" main_expr

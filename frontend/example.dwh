@@ -1,8 +1,9 @@
+let x = 1 + 1
 -- 1. Define Static task
 task PythonJob {
---     type: "bash"
---     command: "./jobSystem"
---     schedule: "* * * * *"
+    type: "bash"
+    command: "./jobSystem"
+    schedule: "* * * * *"
 }
 
 -- task GolangJob(input_data) {
