@@ -12,6 +12,7 @@
 %token LPAREN
 %token RPAREN
 %token LBRACE
+%token COMMA
 %token RBRACE
 %token COLON
 %token SEMICOLON
@@ -47,13 +48,18 @@ statements:
 | t=decl { t }
 
 decl:
-| TASK; task_name=ID; LBRACE; props=list(task_property); RBRACE {Task($startpos, Task_name.of_string task_name, props)};
+| TASK; task_name=ID;
+  params=loption(delimited(LPAREN, separated_list(COMMA, ID), RPAREN)); 
+  LBRACE;
+  props=list(task_property);
+  RBRACE 
+  { Task($startpos, Task_name.of_string task_name, List.map Var_name.of_string params, props) }
 
 block_expr:
 | LBRACE; exprs=separated_list(SEMICOLON, expr); RBRACE {Block($startpos, exprs)}
 
 task_property:
-| key=ID; COLON; value=STRING { TaskProp($startpos, key, value) }
+| key=ID; COLON; value=expr { TaskProp($startpos, key, value) }
 
 identifier:
 | variable=ID {Variable(Var_name.of_string variable)}
@@ -64,6 +70,7 @@ expr:
 | id=identifier { Identifier($startpos, id)}
 | e1=expr op=bin_op e2=expr {BinOp($startpos, op, e1, e2)}
 | LET; var_name=ID; EQUAL; bound_expr=expr {Let($startpos, Var_name.of_string var_name, bound_expr)}
+| s=STRING; {StringLit($startpos, s)}
 
 
 %inline bin_op:

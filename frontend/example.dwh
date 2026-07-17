@@ -1,4 +1,3 @@
-let x = 1 + 1
 -- 1. Define Static task
 task PythonJob {
     type: "bash"
@@ -6,10 +5,10 @@ task PythonJob {
     schedule: "* * * * *"
 }
 
--- task GolangJob(input_data) {
---     type: "internal"
---     eval: input_data * 2
--- }
+task GolangJob(input_data) {
+    type: "internal"
+    eval: input_data * 2
+}
 
 -- 2. Define DAG
 -- pipeline MainSchedule {

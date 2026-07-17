@@ -32,6 +32,7 @@ rule read_token =
     | "}" { RBRACE }
     | ":" { COLON }
     | ";" { SEMICOLON }
+    | "," { COMMA }
     | "=" { EQUAL }
     | "+" { PLUS }
     | "-" { MINUS }

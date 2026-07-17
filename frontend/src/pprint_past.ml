@@ -12,15 +12,18 @@ let rec pprint_expr ppf ~indent expr =
     | Let (_, var_name, bound_expr) ->
             print_expr (Fmt.str "Let var: %s" (Var_name.to_string var_name));
             pprint_expr ppf ~indent:new_indent bound_expr
-    | Task (_, task_name, props) ->
+    | StringLit (_, i) -> print_expr (Fmt.str "StringLit: %s" i)
+    | Task (_, task_name, _, props) ->
             print_expr (Fmt.str "Task: %s" (Task_name.to_string task_name));
             List.iter ~f:(fun (TaskProp (_, key, value)) ->
-                Fmt.pf ppf "%sProp: %s = %s@." new_indent key value
+                Fmt.pf ppf "%sProp: %s@." new_indent key;
+                let child_indent = indent_space ^ new_indent in
+                pprint_expr ppf ~indent:child_indent value
             ) props
     | Identifier (_, id) -> (
         match id with
             | Variable var_name ->
-                    print_expr (Fmt.str "Variable: %s" (Var_name.to_string var_name))
+                    print_expr (Fmt.str "Var: %s" (Var_name.to_string var_name))
     )
     | Assign (loc, id, assigned_expr) ->
             print_expr "Assign";
