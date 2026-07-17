@@ -1,8 +1,12 @@
-** 1. Define Static task
-task PythonJob {
-    type: "bash"
-    command: "./jobSystem"
-    schedule: "* * * * *"
+if (x == 1) {
+    -- 1. Define Static task
+    task PythonJob {
+        type: "bash"
+        command: "./jobSystem"
+        schedule: "* * * * *"
+    }
+} else {
+    0
 }
 
 task GolangJob(input_data) {
@@ -10,7 +14,8 @@ task GolangJob(input_data) {
     eval: input_data * 2
 }
 
-** 2. Define DAG
-pipeline MainSchedule {
-    PythonJob -> GolangJob
-}
+-- 2. Define DAG
+-- pipeline MainSchedule {
+--     PythonJob -> GolangJob
+-- }
+
