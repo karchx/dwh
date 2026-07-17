@@ -40,6 +40,8 @@ rule read_token =
     | "*" { MULT }
     | "/" { DIV }
     | "task" { TASK }
+    | "if" { IF }
+    | "else" { ELSE }
     | whitespace { read_token lexbuf }
     | "--" { read_single_line_comment lexbuf }
     | "{-" { read_multi_line_comment lexbuf }

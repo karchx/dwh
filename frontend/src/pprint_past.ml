@@ -29,6 +29,11 @@ let rec pprint_expr ppf ~indent expr =
             print_expr "Assign";
             pprint_expr ppf ~indent:new_indent (Identifier (loc, id));
             pprint_expr ppf ~indent:new_indent assigned_expr
+    | If (_, cond_expr, then_expr, else_expr) ->
+            print_expr "If";
+            pprint_expr ppf ~indent:new_indent cond_expr;
+            pprint_block_expr ppf ~indent:new_indent ~block_name: "Then" then_expr;
+            pprint_block_expr ppf ~indent:new_indent ~block_name: "Else" else_expr;
     | BinOp (_, bin_op, expr1, expr2) ->
             print_expr (Fmt.str "Bin Op: %s" (string_of_bin_op bin_op));
             pprint_expr ppf ~indent:new_indent expr1 ;

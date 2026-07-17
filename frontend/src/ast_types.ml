@@ -34,10 +34,12 @@ type bin_op =
     | BinOpMinus
     | BinOpMult
     | BinOpDiv
+    | BinOpEq
 
 let string_of_bin_op = function
     | BinOpPlus -> "+"
     | BinOpMinus -> "-"
     | BinOpMult -> "*"
     | BinOpDiv -> "/"
+    | BinOpEq -> "=="
 

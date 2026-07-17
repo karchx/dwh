@@ -22,6 +22,8 @@
 %token DIV
 %token EQUAL
 %token LET
+%token IF
+%token ELSE 
 %token TASK
 %token <string> STRING
 %token EOF
@@ -71,6 +73,8 @@ expr:
 | e1=expr op=bin_op e2=expr {BinOp($startpos, op, e1, e2)}
 | LET; var_name=ID; EQUAL; bound_expr=expr {Let($startpos, Var_name.of_string var_name, bound_expr)}
 | s=STRING; {StringLit($startpos, s)}
+| d=decl { d }
+| IF; cond_expr=expr; then_expr=block_expr; ELSE; else_expr=block_expr {If($startpos, cond_expr, then_expr, else_expr)}
 
 
 %inline bin_op:
@@ -78,4 +82,5 @@ expr:
 | MINUS { BinOpMinus }
 | MULT { BinOpMult }
 | DIV { BinOpDiv }
+| EQUAL EQUAL {BinOpEq}
 

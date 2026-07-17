@@ -26,6 +26,7 @@ type bin_op =
     | BinOpMinus
     | BinOpMult
     | BinOpDiv
+    | BinOpEq
 
 val string_of_bin_op : bin_op -> string
 
