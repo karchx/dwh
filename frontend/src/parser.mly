@@ -43,11 +43,8 @@
 %%
 
 program:
-| exprs=list(statements); EOF { Prog(Block($startpos, exprs)) }
+| exprs=list(expr); EOF { Prog(Block($startpos, exprs)) }
 
-statements:
-| e=expr { e }
-| t=decl { t }
 
 decl:
 | TASK; task_name=ID;
