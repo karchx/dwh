@@ -11,6 +11,7 @@ end
 
 module Var_name : ID
 module Task_name : ID
+module Pipeline_name : ID
 
 type modifier = MConst (** Immutable *) | MVar (** Mutable *)
 
@@ -27,6 +28,7 @@ type bin_op =
     | BinOpMult
     | BinOpDiv
     | BinOpEq
+    | BinOpConn
 
 val string_of_bin_op : bin_op -> string
 

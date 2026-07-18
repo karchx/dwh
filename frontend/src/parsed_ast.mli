@@ -8,6 +8,7 @@ type expr =
     | Identifier of loc * identifier
     | Let of loc * Var_name.t * expr
     | Task of loc * Task_name.t * Var_name.t list * task_prop list
+    | Pipeline of loc * Pipeline_name.t * expr
     | Assign of loc * identifier * expr
     | If of loc * expr * block_expr * block_expr
     | BinOp of loc * bin_op * expr * expr

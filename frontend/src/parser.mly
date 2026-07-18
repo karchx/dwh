@@ -21,13 +21,16 @@
 %token MULT
 %token DIV
 %token EQUAL
+%token CONN
 %token LET
 %token IF
 %token ELSE 
 %token TASK
+%token PIPELINE
 %token <string> STRING
 %token EOF
 
+%right CONN
 %right EQUAL
 %left PLUS MINUS
 %left MULT DIV
@@ -43,7 +46,7 @@
 %%
 
 program:
-| exprs=list(expr); EOF { Prog(Block($startpos, exprs)) }
+| stmts=list(statement); EOF { Prog(Block($startpos, stmts)) }
 
 
 decl:
@@ -53,9 +56,14 @@ decl:
   props=list(task_property);
   RBRACE 
   { Task($startpos, Task_name.of_string task_name, List.map Var_name.of_string params, props) }
+| PIPELINE; pipeline_name=ID;
+ LBRACE;
+ exprs=expr;
+ RBRACE;
+ { Pipeline($startpos, Pipeline_name.of_string pipeline_name, exprs) }
 
 block_expr:
-| LBRACE; exprs=separated_list(SEMICOLON, expr); RBRACE {Block($startpos, exprs)}
+| LBRACE; stmts=list(statement); RBRACE {Block($startpos, stmts)}
 
 task_property:
 | key=ID; COLON; value=expr { TaskProp($startpos, key, value) }
@@ -63,15 +71,18 @@ task_property:
 identifier:
 | variable=ID {Variable(Var_name.of_string variable)}
 
+statement:
+| LET; var_name=ID; EQUAL; bound_expr=expr; SEMICOLON; {Let($startpos, Var_name.of_string var_name, bound_expr)}
+| IF; cond_expr=expr; then_expr=block_expr; ELSE; else_expr=block_expr {If($startpos, cond_expr, then_expr, else_expr)}
+| e=expr; SEMICOLON { e }
+| d=decl { d }
+
 expr:
 | LPAREN e=expr RPAREN {e}
 | i=INT {Integer($startpos, i)}
 | id=identifier { Identifier($startpos, id)}
 | e1=expr op=bin_op e2=expr {BinOp($startpos, op, e1, e2)}
-| LET; var_name=ID; EQUAL; bound_expr=expr {Let($startpos, Var_name.of_string var_name, bound_expr)}
 | s=STRING; {StringLit($startpos, s)}
-| d=decl { d }
-| IF; cond_expr=expr; then_expr=block_expr; ELSE; else_expr=block_expr {If($startpos, cond_expr, then_expr, else_expr)}
 
 
 %inline bin_op:
@@ -79,5 +90,6 @@ expr:
 | MINUS { BinOpMinus }
 | MULT { BinOpMult }
 | DIV { BinOpDiv }
+| CONN { BinOpConn }
 | EQUAL EQUAL {BinOpEq}
 

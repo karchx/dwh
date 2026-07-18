@@ -20,6 +20,9 @@ let rec pprint_expr ppf ~indent expr =
                 let child_indent = indent_space ^ new_indent in
                 pprint_expr ppf ~indent:child_indent value
             ) props
+    | Pipeline (_, pipeline_name, bound_expr) ->
+            print_expr (Fmt.str "Pipeline: %s" (Pipeline_name.to_string pipeline_name));
+            pprint_expr ppf ~indent:new_indent bound_expr
     | Identifier (_, id) -> (
         match id with
             | Variable var_name ->

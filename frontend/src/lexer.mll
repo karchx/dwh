@@ -39,7 +39,9 @@ rule read_token =
     | "let" { LET }
     | "*" { MULT }
     | "/" { DIV }
+    | "->" { CONN }
     | "task" { TASK }
+    | "pipeline" { PIPELINE }
     | "if" { IF }
     | "else" { ELSE }
     | whitespace { read_token lexbuf }

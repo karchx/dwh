@@ -21,6 +21,7 @@ end
 
 module Var_name : ID = String_id
 module Task_name : ID  = String_id
+module Pipeline_name : ID = String_id
 
 type modifier = MConst | MVar
 
@@ -35,6 +36,7 @@ type bin_op =
     | BinOpMult
     | BinOpDiv
     | BinOpEq
+    | BinOpConn
 
 let string_of_bin_op = function
     | BinOpPlus -> "+"
@@ -42,4 +44,5 @@ let string_of_bin_op = function
     | BinOpMult -> "*"
     | BinOpDiv -> "/"
     | BinOpEq -> "=="
+    | BinOpConn -> "->"
 
