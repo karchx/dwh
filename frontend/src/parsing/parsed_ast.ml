@@ -1,4 +1,4 @@
-open Ast_types
+open Ast.Ast_types
 
 type identifier = Variable of Var_name.t
 
@@ -10,7 +10,7 @@ type expr =
     | Task of loc * Task_name.t * Var_name.t list * task_prop list
     | Pipeline of loc * Pipeline_name.t * expr
     | Assign of loc * identifier * expr
-    | If of loc * expr * block_expr * block_expr
+    | If of loc * expr * block_expr * block_expr (* if ___ then ___ else ___ *)
     | BinOp of loc * bin_op * expr * expr
 and block_expr = Block of loc * expr list
 and task_prop =

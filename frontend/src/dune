@@ -1,14 +1,9 @@
 (executable
- (public_name frontend)
  (name main)
- (libraries core fmt core_unix.sys_unix core_unix.command_unix)
+ (public_name frontend)
+ (libraries core fmt core_unix.sys_unix core_unix.command_unix parsing)
  (preprocess
   (pps ppx_jane))
  (lint
   (pps ppx_js_style -annotated-ignores -styler -pretty -dated-deprecation)))
-
-(ocamllex lexer)
-
-(menhir
- (modules parser))
 

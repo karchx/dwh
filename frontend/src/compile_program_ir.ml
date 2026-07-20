@@ -1,5 +1,5 @@
 open Core
-open Lex_and_parser
+open Parsing.Lex_and_parser
 
 let maybe_pprint_ast should_pprint_ast pprintfun ast =
     if should_pprint_ast then (

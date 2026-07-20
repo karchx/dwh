@@ -1,0 +1,10 @@
+(library
+ (name parsing)
+ (libraries core fmt ast)
+ (lint
+  (pps ppx_js_style -annotated-ignores -styler -pretty -dated-deprecation)))
+
+(ocamllex lexer)
+
+(menhir
+ (modules parser))

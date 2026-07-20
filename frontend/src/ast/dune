@@ -1,0 +1,6 @@
+(library
+ (name ast)
+ (libraries core fmt)
+ (lint
+  (pps ppx_js_style -check-doc-comments -annotated-ignores -styler -pretty
+    -dated-deprecation)))
